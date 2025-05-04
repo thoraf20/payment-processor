@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	
+
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -18,6 +18,7 @@ type Config struct {
 }
 
 func Load() (*Config, error) {
+
 	var cfg Config
 	err := envconfig.Process("", &cfg)
 	if err != nil {

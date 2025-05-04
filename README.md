@@ -97,3 +97,61 @@ Content-Type: application/json
 {
   "amount": 1000
 }
+
+
+// Initialize repositories
+	// paymentRepo := repository.NewPostgresPaymentRepository(db, log)
+	
+	// // Initialize payment processor
+	// stripeProcessor := processors.NewStripeProcessor(cfg.StripeAPIKey)
+	
+	// // Initialize payment engine
+	// paymentEngine := engine.NewPaymentEngine(stripeProcessor, paymentRepo)
+	
+	// // Initialize HTTP server
+	// server := api.NewServer(log, paymentEngine)
+
+  Additional Production Considerations
+Idempotency: Implement idempotency keys for payment requests
+
+Retry Logic: For transient failures with payment processors
+
+Webhooks: For async payment status updates
+
+Circuit Breakers: For external service calls
+
+Rate Limiting: To protect against abuse
+
+Data Encryption: For sensitive payment data
+
+Compliance: PCI DSS compliance considerations
+
+Multi-Processor Support: Fallback processors
+
+Batch Processing: For settlements and reconciliations
+
+Audit Logging: For all payment operations
+
+
+
+processor := processors.NewStripeProcessor("your_stripe_secret_key")
+
+payment := &engine.Payment{
+    Amount:   1000, // $10.00
+    Currency: "usd",
+    PaymentMethod: engine.PaymentMethod{
+        Type: "card",
+        Details: map[string]interface{}{
+            "number":    "4242424242424242",
+            "exp_month": 12,
+            "exp_year":  2025,
+            "cvc":       "123",
+        },
+    },
+}
+
+err := processor.Authorize(context.Background(), payment)
+if err != nil {
+    // Handle error
+    fmt.Printf("Payment failed: %v\n", err)
+}
