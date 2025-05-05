@@ -56,7 +56,7 @@ func main() {
 	paymentRepo := repository.NewPostgresPaymentRepository(db, log)
 
 	// Verify the repository implements all methods
-var _ repository.PaymentRepository = (*repository.PostgresPaymentRepository)(nil)
+	var _ repository.PaymentRepository = (*repository.PostgresPaymentRepository)(nil)
 
 	// Initialize payment processors
 	stripeProcessor := processors.NewStripeProcessor(cfg.StripeAPIKey)
