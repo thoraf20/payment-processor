@@ -7,11 +7,13 @@ import (
 )
 
 type Config struct {
-	HTTPPort         			string `envconfig:"HTTP_PORT" default:"8080"`
+	HTTPPort         			string `envconfig:"HTTP_PORT" default:"8081"`
 	DatabaseURL     			string `envconfig:"DATABASE_URL" required:"true"`
 	StripeAPIKey     			string `envconfig:"STRIPE_API_KEY" required:"true"`
 	FlutterWaveAPIKey     string `envconfig:"FLUTTERWAVE_API_KEY" required:"true"`
+	FlutterwaveBaseURL 		string `envconfig:"FLUTTERWAVE_BASE_URL" default:"https://api.flutterwave.com/v3"`
 	PayStackAPIKey     		string `envconfig:"PAYSTACK_API_KEY" required:"true"`
+
 
 	Environment      			string `envconfig:"ENVIRONMENT" default:"development"`
 	LogLevel         			string `envconfig:"LOG_LEVEL" default:"info"`

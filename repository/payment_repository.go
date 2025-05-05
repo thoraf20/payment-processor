@@ -1,4 +1,3 @@
-// repository/payment_repository.go
 package repository
 
 import (
@@ -23,19 +22,19 @@ type PaymentRepository interface {
 	List(ctx context.Context, filter PaymentFilter) ([]*model.Payment, error)
 }
 
-type PostgresPaymentRepository struct {
+type DbPaymentRepository struct {
 	db     *sql.DB
 	logger *zap.Logger
 }
 
-func NewPostgresPaymentRepository(db *sql.DB, logger *zap.Logger) *PostgresPaymentRepository {
-	return &PostgresPaymentRepository{
+func NewPaymentRepository(db *sql.DB, logger *zap.Logger) *DbPaymentRepository {
+	return &DbPaymentRepository{
 		db:     db,
 		logger: logger,
 	}
 }
 
-func (r *PostgresPaymentRepository) Save(ctx context.Context, payment *model.Payment) error {
+func (r *DbPaymentRepository) Save(ctx context.Context, payment *model.Payment) error {
 	// Your implementation here
 	query := `INSERT INTO payments (id, external_id, amount, currency, status, payment_method_type, 
 	          payment_method_details, created_at, updated_at, metadata)
@@ -60,7 +59,7 @@ func (r *PostgresPaymentRepository) Save(ctx context.Context, payment *model.Pay
 	return err
 }
 
-func (r *PostgresPaymentRepository) Get(ctx context.Context, id string) (*model.Payment, error) {
+func (r *DbPaymentRepository) Get(ctx context.Context, id string) (*model.Payment, error) {
 	query := `SELECT id, external_id, amount, currency, status, payment_method_type, 
 	         payment_method_details, created_at, updated_at, metadata
 	         FROM payments WHERE id = $1`
@@ -97,7 +96,7 @@ func (r *PostgresPaymentRepository) Get(ctx context.Context, id string) (*model.
 	return &payment, nil
 }
 
-func (r *PostgresPaymentRepository) List(ctx context.Context, filter PaymentFilter) ([]*model.Payment, error) {
+func (r *DbPaymentRepository) List(ctx context.Context, filter PaymentFilter) ([]*model.Payment, error) {
 	// Implement your listing logic here
 	return nil, nil
 }

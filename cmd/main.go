@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	_ "github.com/lib/pq"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"github.com/thoraf20/payment-processor/api"
 	"github.com/thoraf20/payment-processor/config"
 	"github.com/thoraf20/payment-processor/engine"
@@ -31,7 +31,7 @@ func main() {
 	if err != nil {
 		zap.L().Fatal("Failed to load config", zap.Error(err))
 	}
-	
+
 	// Initialize logger
 	log, err := logger.New(cfg.LogLevel)
 	if err != nil {
@@ -39,7 +39,7 @@ func main() {
 	}
 	defer log.Sync()
 	zap.ReplaceGlobals(log) // Set as global logger
-	
+
 	// Set up database connection
 	db, err := sql.Open("postgres", cfg.DatabaseURL)
 	if err != nil {
@@ -52,23 +52,27 @@ func main() {
 		log.Fatal("Failed to ping database", zap.Error(err))
 	}
 
+	// Initialize processor router
+	router := engine.NewProcessorRouter()
+
+	// Register processors
+	router.RegisterProcessor("stripe", &processors.StripeProcessor{})
+	router.RegisterProcessor("flutterwave", &processors.FlutterwaveProcessor{})
+	// router.RegisterProcessor("paystack", paystackProcessor)
+
 	// Initialize repositories
-	paymentRepo := repository.NewPostgresPaymentRepository(db, log)
+	paymentRepo := repository.NewPaymentRepository(db, log)
 
 	// Verify the repository implements all methods
-	var _ repository.PaymentRepository = (*repository.PostgresPaymentRepository)(nil)
+	var _ repository.PaymentRepository = (*repository.DbPaymentRepository)(nil)
 
 	// Initialize payment processors
 	stripeProcessor := processors.NewStripeProcessor(cfg.StripeAPIKey)
-	// flutterwaveProcessor := processors.NewFlutterwaveProcessor(cfg.FlutterWaveAPIKey, paymentRepo)
 	// paystackProcessor := processors.NewPaystackProcessor(cfg.PayStackAPIKey, paymentRepo)
 
 	// Create processor router (if you have multiple processors)
-	// processorRouter := engine.NewPaymentEngine(
-	// 	stripeProcessor,
-	// 	// flutterwaveProcessor,
-	// 	// paystackProcessor,
-	// )
+	processorRouter := engine.NewProcessorRouter()
+	processorRouter.Repo = paymentRepo
 
 	// Initialize payment engine
 	paymentEngine := engine.NewPaymentEngine(stripeProcessor, paymentRepo)
@@ -92,18 +96,18 @@ func main() {
 			log.Fatal("Server failed", zap.Error(err))
 		}
 	}()
-	
+
 	// Graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	
+
 	log.Info("Shutting down server...")
-	
+
 	// Create shutdown context with timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	
+
 	// Shutdown HTTP server
 	if err := httpServer.Shutdown(ctx); err != nil {
 		log.Error("Server shutdown failed", zap.Error(err))
