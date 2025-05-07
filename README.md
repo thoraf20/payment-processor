@@ -8,18 +8,6 @@ A production-ready payment processing system built with Go that supports multipl
 
 ## Architecture Overview
 
-```mermaid
-graph TD
-    A[API Layer] --> B[Payment Engine]
-    B --> C[Processors]
-    B --> D[Repository]
-    D --> E[(PostgreSQL)]
-    C --> F[Stripe]
-    C --> G[FlutterWave]
-    C --> H[PayStack]
-
-## Architecture
-
         ┌─────────────────┐
         │     API Layer   │ ← Adapters
         └─────────────────┘
@@ -94,7 +82,7 @@ Directory                               Purpose
 
 /model	        Domain models and data structures
 
-/processors	    Payment provider integrations (Stripe, Flutterwave, etc.)
+/processors	    Payment provider integrations (Stripe, Flutterwave and Paystack)
 
 /repository	    Database access layer
 
@@ -102,10 +90,10 @@ Directory                               Purpose
 
 ## API Endpoints
 
-POST   /payments          - Create new payment
-GET    /payments/{id}     - Retrieve payment
-POST   /payments/{id}/capture - Capture authorized payment
-POST   /payments/{id}/refund  - Process refund
+POST   /payments                      - Create new payment
+GET    /payments/{id}                 - Retrieve payment
+POST   /payments/{id}/capture         - Capture authorized payment
+POST   /payments/{id}/refund          - Process refund
 
 # System
 
