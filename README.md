@@ -12,7 +12,7 @@ A production-ready payment processing system built with Go that supports multipl
         │     API Layer   │ ← Adapters
         └─────────────────┘
                 ↑↓
-┌─────────────────────────────────┐
+┌─────────────────────────────────
 │        Business Logic           │ ← Use Cases
 │  (Payment Engine & Processors)  │
 └─────────────────────────────────┘
