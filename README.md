@@ -6,7 +6,7 @@
 
 A production-ready payment processing system built with Go that supports multiple payment providers (Stripe, Flutterwave, Paystack) with clean architecture and robust error handling.
 
-## Architecture Overview
+# Architecture Overview
 
         ┌─────────────────┐
         │     API Layer   │ ← Adapters
@@ -21,7 +21,9 @@ A production-ready payment processing system built with Go that supports multipl
         │     Database    │ ← Gateways
         └─────────────────┘
 
-Key Features
+
+
+# Key Features
 💳 Multi-provider support (Stripe, FlutterWave, PayStack)
 
 🔐 PCI-compliant payment handling
